@@ -2,3 +2,4 @@ Flask
 scikit-learn
 joblib
 gunicorn
+scikit-learn==1.1.3
