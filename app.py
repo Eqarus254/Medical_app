@@ -1,60 +1,29 @@
-
-from flask import Flask, request, jsonify
-import numpy as np
-import pandas as pd
-from sklearn.ensemble import IsolationForest
+from flask import Flask, request, jsonify, render_template
 import joblib
+import pandas as pd
 import os
 
 app = Flask(__name__)
-MODEL_PATH = "model/isolation_model.pkl"
+MODEL_PATH = os.path.join("app", "model.pkl")
 
-def train_model():
-    data = {
-        'heart_rate': np.random.randint(60, 100, 100),
-        'blood_oxygen': np.random.randint(90, 100, 100)
-    }
-    df = pd.DataFrame(data)
-    model = IsolationForest(contamination=0.1)
-    model.fit(df[['heart_rate', 'blood_oxygen']])
-    joblib.dump(model, MODEL_PATH)
-    return model
+@app.route('/')
+def index():
+    return render_template('index.html')
 
-if os.path.exists(MODEL_PATH):
-    model = joblib.load(MODEL_PATH)
-else:
-    model = train_model()
-
-@app.route("/")
-def home():
-    return "AI Health Monitor API is Running!"
-
-@app.route("/api/predict", methods=["POST"])
+@app.route('/predict', methods=['POST'])
 def predict():
     try:
-        data = request.get_json()
-        heart_rate = data.get("heart_rate")
-        blood_oxygen = data.get("blood_oxygen")
-
-        if heart_rate is None or blood_oxygen is None:
-            return jsonify({"error": "Missing data"}), 400
-
-        input_df = pd.DataFrame([[heart_rate, blood_oxygen]], columns=["heart_rate", "blood_oxygen"])
-        prediction = model.predict(input_df)[0]
-        result = "Anomaly" if prediction == -1 else "Normal"
-
-        return jsonify({
-            "heart_rate": heart_rate,
-            "blood_oxygen": blood_oxygen,
-            "prediction": result
-        })
-
+        data = request.json
+        df = pd.DataFrame([data])
+        model = joblib.load(MODEL_PATH)
+        prediction = model.predict(df)
+        return jsonify({'prediction': prediction.tolist()})
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({'error': str(e)}), 500
 
-if __name__ == "__main__":
-    import os
+@app.route('/api', methods=['GET'])
+def api_status():
+    return "AI Health Monitor API is Running!"
 
-port = int(os.environ.get("PORT", 5000))
-app.run(host="0.0.0.0", port=port, debug=True)
-
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=10000, debug=True)
