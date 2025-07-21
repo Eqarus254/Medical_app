@@ -1,0 +1,30 @@
+
+<!DOCTYPE html>
+<html>
+<head><title>Health Monitor</title></head>
+<body>
+  <h2>Welcome to Health Monitor</h2>
+  <form id="form">
+    Heart Rate: <input type="number" id="heart_rate" /><br>
+    Blood Oxygen: <input type="number" id="blood_oxygen" /><br>
+    <button type="submit">Submit</button>
+  </form>
+  <p id="result"></p>
+
+  <script>
+    document.getElementById('form').onsubmit = async function(e) {
+      e.preventDefault();
+      const response = await fetch('/api/predict', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          heart_rate: parseInt(document.getElementById('heart_rate').value),
+          blood_oxygen: parseInt(document.getElementById('blood_oxygen').value)
+        })
+      });
+      const result = await response.json();
+      document.getElementById('result').innerText = "Status: " + result.status;
+    };
+  </script>
+</body>
+</html>
