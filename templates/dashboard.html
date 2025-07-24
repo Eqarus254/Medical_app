@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard - Health Monitor</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Health Monitoring Dashboard</h2>
+        <form id="healthForm">
+            <input type="number" name="heart_rate" placeholder="Heart Rate" step="any" required><br>
+            <input type="number" name="systolic_bp" placeholder="Systolic BP" step="any" required><br>
+            <input type="number" name="diastolic_bp" placeholder="Diastolic BP" step="any" required><br>
+            <input type="number" name="glucose" placeholder="Glucose Level" step="any" required><br>
+            <input type="number" name="temperature" placeholder="Body Temperature" step="any" required><br>
+            <button type="submit">Submit</button>
+        </form>
+        <div id="result"></div>
+        <br>
+        <a href="/logout">Logout</a>
+    </div>
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
