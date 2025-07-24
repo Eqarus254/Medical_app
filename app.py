@@ -1,13 +1,13 @@
 from flask import Flask, render_template, request, redirect, url_for, session
-import pickle
+import joblib
 import numpy as np
 
 app = Flask(__name__)
 app.secret_key = 'supersecretkey'
 
 # Load model and scaler
-model = pickle.load(open('health_rf_model.pkl', 'rb'))
-scaler = pickle.load(open('health_seq_scaler.pkl', 'rb'))
+model = joblib.load(open('health_rf_model.pkl', 'rb'))
+scaler = joblib.load(open('health_seq_scaler.pkl', 'rb'))
 
 @app.route('/', methods=['GET', 'POST'])
 def login():
